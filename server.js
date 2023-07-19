@@ -1,5 +1,15 @@
 const express = require("express");
 const app = express();
+require("dotenv").config();
+const { Client } = require("pg");
+const client = new Client({
+  host: "localhost",
+  port: 28813,
+  database: "azure_functions_extension",
+  user: "npollock",
+  password: process.env.PG_PASSWORD,
+});
+client.connect();
 const supportedLanguages = ["english", "spanish"];
 
 // This will parse JSON bodies
