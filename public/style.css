@@ -1,0 +1,37 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+  
+  .section {
+    margin-bottom: 2em;
+  }
+  
+  textarea {
+    width: 80%;
+    height: 150px;
+    margin: 1em auto;
+    padding: 0.5em;
+  }
+  
+  button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 0.5em 1em;
+    margin: 1em;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  #display-area {
+    width: 80%;
+    height: 150px;
+    margin: 1em auto;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+  }
+  
