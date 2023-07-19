@@ -25,15 +25,25 @@ async function fetchText(language) {
     const data = await response.json();
 
     if (response.ok) {
-      let content = "";
+      const tableBody = document.getElementById(`table-body-${language}`);
+      tableBody.innerHTML = ""; // Clear existing content
+
       for (const row of data) {
         const date = new Date(row.created);
-        const formattedDate = date.toLocaleString();
+        // just extract the time portion
+        const time = date.toLocaleTimeString("en-US");
 
-        content += `Created: ${formattedDate}\nText: ${row.body}\n\n`;
+        const tableRow = document.createElement("tr");
+        const dateCell = document.createElement("td");
+        const textCell = document.createElement("td");
+
+        dateCell.textContent = `${time}`;
+        textCell.textContent = `${row.body}`;
+
+        tableRow.appendChild(dateCell);
+        tableRow.appendChild(textCell);
+        tableBody.appendChild(tableRow);
       }
-
-      document.getElementById("display-area").textContent = content;
     } else {
       alert("Error: " + response.statusText);
     }
@@ -45,6 +55,23 @@ async function fetchText(language) {
 
 document.getElementById("upload-btn").addEventListener("click", function () {
   uploadText(document.getElementById("text-input").value);
+  // Clear the input field
+  document.getElementById("text-input").value = "";
+});
+
+document.getElementById("clear-tables").addEventListener("click", function () {
+  fetch("/clear-tables", { method: "GET" })
+    .then((response) => {
+      if (response.ok) {
+        alert("Tables cleared successfully");
+      } else {
+        alert("Error: " + response.statusText);
+      }
+    })
+    .catch((err) => {
+      console.error("Error:", err);
+      alert("An error occurred. Please try again.");
+    });
 });
 
 document

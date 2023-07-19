@@ -12,13 +12,43 @@
         id="text-input"
         placeholder="Enter your English text here..."
       ></textarea>
-      <button id="upload-btn">Upload English Text</button>
+      <button id="upload-btn">Insert Text into English</button>
     </div>
 
     <div class="section">
-      <button id="fetch-english-btn">Fetch English Text</button>
-      <button id="fetch-spanish-btn">Fetch Spanish Text</button>
-      <div id="display-area">Fetched text will be displayed here...</div>
+      <div class="section">
+        <h2>English Table</h2>
+        <div id="display-area-english">
+          <table>
+            <thead>
+              <tr>
+                <th>Created</th>
+                <th>Text</th>
+              </tr>
+            </thead>
+            <tbody id="table-body-english"></tbody>
+          </table>
+        </div>
+        <button id="fetch-english-btn">Refresh English Table</button>
+      </div>
+      <div class="section">
+        <h2>Spanish Table</h2>
+        <div id="display-area-spanish">
+          <table>
+            <thead>
+              <tr>
+                <th>Created</th>
+                <th>Text</th>
+              </tr>
+            </thead>
+            <tbody id="table-body-spanish"></tbody>
+          </table>
+        </div>
+        <button id="fetch-spanish-btn">Refresh Spanish Table</button>
+      </div>
+    </div class="section">
+    <button id="clear-tables">Clear Tables</button>
+    </div>
     </div>
 
     <script src="app.js"></script>

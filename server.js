@@ -1,15 +1,5 @@
 const express = require("express");
 const app = express();
-require("dotenv").config();
-const { Client } = require("pg");
-const client = new Client({
-  host: "localhost",
-  port: 28813,
-  database: "azure_functions_extension",
-  user: "npollock",
-  password: process.env.PG_PASSWORD,
-});
-client.connect();
 const supportedLanguages = ["english", "spanish"];
 
 // This will parse JSON bodies
@@ -48,6 +38,17 @@ app.get("/get-text", async (req, res) => {
   try {
     const result = await client.query(query);
     return res.status(200).send(result.rows);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send("Something went wrong");
+  }
+});
+
+app.get("/clear-tables", async (req, res) => {
+  const query = `TRUNCATE TABLE english, spanish`;
+  try {
+    await client.query(query);
+    return res.status(200).send("Tables cleared successfully");
   } catch (err) {
     console.log(err);
     return res.status(500).send("Something went wrong");
