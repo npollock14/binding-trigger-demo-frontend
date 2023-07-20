@@ -1,15 +1,6 @@
 const express = require("express");
 const app = express();
-require("dotenv").config();
-const { Client } = require("pg");
-const client = new Client({
-  host: "localhost",
-  port: 28813,
-  database: "azure_functions_extension",
-  user: "npollock",
-  password: process.env.PG_PASSWORD,
-});
-client.connect();
+
 const supportedLanguages = ["english", "spanish"];
 
 // This will parse JSON bodies
@@ -22,13 +13,23 @@ app.post("/upload-english", async (req, res) => {
   if (!text) {
     return res.status(400).send("Please provide some text");
   }
-  const query = `INSERT INTO english (body) VALUES ('${text}')`;
+  const url = `http://127.0.0.1:7071/api/add-english-entry`;
+  const data = { Body: text, Created: new Date().toISOString() };
+  console.log(`Posting data to ${url}`);
   try {
-    const result = await client.query(query);
-    if (result.rowCount !== 1) {
+    const response = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    // if its 2xx then its ok
+    if (response.ok) {
+      return res.status(200).send("Text uploaded");
+    } else {
       return res.status(500).send("Something went wrong");
     }
-    return res.status(200).send("Text uploaded successfully");
   } catch (err) {
     console.log(err);
     return res.status(500).send("Something went wrong");
@@ -44,21 +45,13 @@ app.get("/get-text", async (req, res) => {
   if (!supportedLanguages.includes(language)) {
     return res.status(400).send("Language not supported");
   }
-  const query = `SELECT created, body FROM ${language}`; // Changed here
+  // query azure function at: http://localhost:7071/api/getentries/{language}
+  const url = `http://127.0.0.1:7071/api/getentries/${language}`;
+  console.log(`Fetching data from ${url}`);
   try {
-    const result = await client.query(query);
-    return res.status(200).send(result.rows);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send("Something went wrong");
-  }
-});
-
-app.get("/clear-tables", async (req, res) => {
-  const query = `TRUNCATE TABLE english, spanish`;
-  try {
-    await client.query(query);
-    return res.status(200).send("Tables cleared successfully");
+    const response = await fetch(url);
+    const data = await response.json();
+    return res.status(200).send(data);
   } catch (err) {
     console.log(err);
     return res.status(500).send("Something went wrong");

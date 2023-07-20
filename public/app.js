@@ -29,9 +29,11 @@ async function fetchText(language) {
       tableBody.innerHTML = ""; // Clear existing content
 
       for (const row of data) {
+        console.log(row.created);
         const date = new Date(row.created);
-        // just extract the time portion
-        const time = date.toLocaleTimeString("en-US");
+        // just extract the time portion with am and pm ie not military time
+        const utcTime = date.toUTCString().split(" ")[4];
+        const time = convertTo12Hour(utcTime);
 
         const tableRow = document.createElement("tr");
         const dateCell = document.createElement("td");
@@ -53,25 +55,25 @@ async function fetchText(language) {
   }
 }
 
+const convertTo12Hour = (time) => {
+  const timeParts = time.split(":");
+  let hour = parseInt(timeParts[0]);
+  const minutes = timeParts[1];
+  const period = hour >= 12 ? "PM" : "AM";
+
+  if (hour >= 13) {
+    hour -= 12;
+  } else if (hour === 0) {
+    hour = 12;
+  }
+
+  return `${hour}:${minutes} ${period}`;
+};
+
 document.getElementById("upload-btn").addEventListener("click", function () {
   uploadText(document.getElementById("text-input").value);
   // Clear the input field
   document.getElementById("text-input").value = "";
-});
-
-document.getElementById("clear-tables").addEventListener("click", function () {
-  fetch("/clear-tables", { method: "GET" })
-    .then((response) => {
-      if (response.ok) {
-        alert("Tables cleared successfully");
-      } else {
-        alert("Error: " + response.statusText);
-      }
-    })
-    .catch((err) => {
-      console.error("Error:", err);
-      alert("An error occurred. Please try again.");
-    });
 });
 
 document
